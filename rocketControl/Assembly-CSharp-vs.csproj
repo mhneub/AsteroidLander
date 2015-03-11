@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\ButtonController.cs" />
      <Compile Include="Assets\Scripts\asteroidController.cs" />
      <Compile Include="Assets\Scripts\asteroidSpawnerScript.cs" />
      <Compile Include="Assets\Scripts\bulletController.cs" />
