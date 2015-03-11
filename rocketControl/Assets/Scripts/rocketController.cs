@@ -9,7 +9,8 @@ public class rocketController : MonoBehaviour {
 	public GameObject YouLoseText;
 	public GameObject YouWinText;
 	public Rigidbody2D bullet;
-
+	public Sprite spriteNoFlame;
+	public Sprite spriteWithFlame;
 
 	// constant variables
 	const float Pi = 3.14159f;
@@ -25,7 +26,7 @@ public class rocketController : MonoBehaviour {
 	float minSwipeDist = 50;
 	float swipeDistVertical;
 	int bulletTimeInterval = 10;
-	int swipeCount = 0;
+	//int swipeCount = 0;
 	int flipped = 0;
 	bool touchThruster = false;
 	bool touchGun = false;
@@ -34,6 +35,9 @@ public class rocketController : MonoBehaviour {
 	Vector2 vel;
 	Dictionary<int,Vector2> initialTouchPos;
 	Dictionary<int, float> swipeDist;
+
+	SpriteRenderer spriteRenderer;
+	bool isThrusting;
 
 
 
@@ -68,6 +72,10 @@ public class rocketController : MonoBehaviour {
 		initialTouchPos = new Dictionary<int, Vector2> ();
 		swipeDist = new Dictionary<int, float> ();
 		Init ();
+
+		spriteRenderer = GetComponent<SpriteRenderer> ();
+		spriteRenderer.sprite = spriteNoFlame;
+		isThrusting = false;
 	}
 
 	void thrust(){
@@ -100,20 +108,28 @@ public class rocketController : MonoBehaviour {
 
 	void translateRocket(Vector3 touchPosition){
 		RaycastHit2D hit = Physics2D.Raycast(touchPosition, Vector2.zero);
-		if(hit.collider != null){
+		if (hit.collider != null) {
 			GameObject recipient = hit.transform.gameObject;
-			if (recipient.name == "Thruster"){
-				rigidbody2D.AddForce(thrusterSpeed * transform.up);
-				thrust();
+			if (recipient.name == "Thruster") {
+				rigidbody2D.AddForce (thrusterSpeed * transform.up);
+				thrust ();
 				//acc += thrusterSpeed*transform.up;
-			}
-			else if(recipient.name == "Gun") {
+
+				if (!isThrusting) {
+					spriteRenderer.sprite = spriteWithFlame;
+					isThrusting = true;
+				}
+			} else if (recipient.name == "Gun") {
 				//acc -= thrusterSpeed*transform.up;
-				rigidbody2D.AddForce(-transform.up);
-				shoot();
+				rigidbody2D.AddForce (-transform.up);
+				shoot ();
+			}
+		} else {
+			if (isThrusting) {
+				spriteRenderer.sprite = spriteNoFlame;
+				isThrusting = false;
 			}
 		}
-
 	}
 
 	void rotateRocket(float axis){
@@ -227,19 +243,23 @@ public class rocketController : MonoBehaviour {
 		}
 
 #endif*/
-		if(Input.touchCount > 0){
+		if (Input.touchCount > 0) {
 			bool swiped = false;
 			if (Input.touchCount == 2)
-				swiped = detectTwoFingerSwipe();
-			if(swiped){
-				rotate180();
-			}
-			else{
+				swiped = detectTwoFingerSwipe ();
+			if (swiped) {
+				rotate180 ();
+			} else {
 				foreach (Touch touch in Input.touches) {
-					translateRocket(Camera.main.ScreenToWorldPoint(touch.position));
+					translateRocket (Camera.main.ScreenToWorldPoint (touch.position));
 				}
 			}
 
+		} else {
+			if (isThrusting) {
+				spriteRenderer.sprite = spriteNoFlame;
+				isThrusting = false;
+			}
 		}
 		vel = rigidbody2D.velocity;
 		rotateRocket (Input.acceleration.x);
