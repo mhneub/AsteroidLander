@@ -19,8 +19,11 @@ public class bulletController : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D col) {
+		Debug.Log ("bullet hit something");
 		if (col.gameObject.tag == "enemy") {
 			Destroy(col.gameObject);
+		} else if (col.gameObject.tag == "terrain") {
+			Destroy(gameObject);
 		}
 	}
 }
