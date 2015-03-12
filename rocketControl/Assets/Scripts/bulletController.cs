@@ -22,7 +22,12 @@ public class bulletController : MonoBehaviour {
 		Debug.Log ("bullet hit something");
 		if (col.gameObject.tag == "enemy") {
 			Destroy(col.gameObject);
-		} else if (col.gameObject.tag == "terrain") {
+		}
+	}
+
+	void OnTriggerEnter2D(Collider2D col) {
+		//if (col.gameObject.name == "platform") {
+		if (col.gameObject.tag == "terrain") {
 			Destroy(gameObject);
 		}
 	}

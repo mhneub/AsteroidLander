@@ -26,7 +26,8 @@ public class rocketController : MonoBehaviour
 	float lowPassFilterFactor = 0.5f;
 	float minSwipeDist = 50;
 	float swipeDistVertical;
-	int bulletTimeInterval = 2;
+	float bulletTimeInterval = 0.1f;	// minimum time between bullets in seconds
+	float timeSinceLastBullet = 0.0f;
 	//int swipeCount = 0;
 	int flipped = 0;
 	bool touchThruster = false;
@@ -99,10 +100,13 @@ public class rocketController : MonoBehaviour
 
 	void shoot()
 	{
-		if ((int)(Time.time * 100) % bulletTimeInterval == 0) {
+		//if ((int)(Time.time * 100) % bulletTimeInterval == 0) {
+		if (timeSinceLastBullet >= bulletTimeInterval) {
 			Rigidbody2D instantiatedBullet = Instantiate(bullet, transform.position, transform.rotation) as Rigidbody2D;
 			instantiatedBullet.velocity = transform.up * bulletSpeed;	
 			Physics2D.IgnoreCollision(instantiatedBullet.collider2D, rigidbody2D.collider2D);
+
+			timeSinceLastBullet = 0.0f;
 		}
 	}
 
@@ -248,6 +252,8 @@ public class rocketController : MonoBehaviour
 		}
 
 #endif*/
+		timeSinceLastBullet += Time.deltaTime;
+
 		if (Input.touchCount > 0) {
 			bool swiped = false;
 			if (Input.touchCount == 2)
