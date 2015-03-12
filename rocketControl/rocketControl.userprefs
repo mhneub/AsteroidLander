@@ -1,10 +1,9 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\bulletController.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\rocketController.cs">
     <Files>
-      <File FileName="Assets\Scripts\rocketController.cs" Line="29" Column="28" />
-      <File FileName="Assets\Scripts\asteroidSpawnerScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\bulletController.cs" Line="22" Column="38" />
+      <File FileName="Assets\Scripts\rocketController.cs" Line="188" Column="8" />
+      <File FileName="Assets\Scripts\bulletController.cs" Line="30" Column="10" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

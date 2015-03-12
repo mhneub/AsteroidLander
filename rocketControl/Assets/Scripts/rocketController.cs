@@ -57,7 +57,7 @@ public class rocketController : MonoBehaviour
 	{
 		YouLoseText.gameObject.renderer.enabled = false;
 		YouWinText.gameObject.renderer.enabled = false;
-		transform.position = originPosition;
+		//transform.position = originPosition;
 		transform.eulerAngles = originAngles;
 		rigidbody2D.velocity = Vector3.zero;
 		rigidbody2D.angularVelocity = 0f;
@@ -69,7 +69,7 @@ public class rocketController : MonoBehaviour
 	{
 		Screen.orientation = ScreenOrientation.LandscapeLeft;
 		vel = new Vector3(0f, 0f, 0f);
-		originPosition = new Vector3(0f, 0f, 0f);
+		//originPosition = new Vector3(0f, 0f, 0f);
 		originAngles = new Vector3(0f, 0f, 0f);
 		transform.localScale = new Vector3(rocketSizeScale, rocketSizeScale, rocketSizeScale);
 		initialTouchPos = new Dictionary<int, Vector2>();
@@ -176,9 +176,6 @@ public class rocketController : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D col)
 	{
-		if (col.gameObject.tag == "enemy") {
-			rocketDeath();
-		}
 		if (col.gameObject.name == "platform") {
 			//Debug.Log ("win " + vel.magnitude + " " + Mathf.Abs(transform.eulerAngles.z) );
 			if (vel.magnitude < allowedSpeed 
@@ -187,6 +184,9 @@ public class rocketController : MonoBehaviour
 			} else {
 				rocketDeath();
 			}
+		}
+		else if (col.gameObject.tag == "enemy" || col.gameObject.tag == "terrain") {
+			rocketDeath();
 		}
 	}
 
