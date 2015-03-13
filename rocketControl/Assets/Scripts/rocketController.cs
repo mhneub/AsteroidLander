@@ -23,15 +23,16 @@ public class rocketController : MonoBehaviour
 	float thrusterSpeed = 1f;
 	float rotationScale = -4f;
 	float bulletSpeed = 5;
-	float lowPassFilterFactor = 0.5f;
-	float minSwipeDist = 50;
+	float lowPassFilterFactor = 0.2f;
+	float minSwipeDist = 20;
 	float swipeDistVertical;
 	float bulletTimeInterval = 0.1f;	// minimum time between bullets in seconds
 	float timeSinceLastBullet = 0.0f;
-	//int swipeCount = 0;
+	float swipeTimeInterval = 1f;
+	float timeSincePrevSwipe = 0.0f;
 	int flipped = 0;
-	bool touchThruster = false;
-	bool touchGun = false;
+	bool swipedThruster = false;
+	bool swipedGun = false;
 	Vector3 originPosition;
 	Vector3 originAngles;
 	Vector2 vel;
@@ -100,7 +101,6 @@ public class rocketController : MonoBehaviour
 
 	void shoot()
 	{
-		//if ((int)(Time.time * 100) % bulletTimeInterval == 0) {
 		if (timeSinceLastBullet >= bulletTimeInterval) {
 			Rigidbody2D instantiatedBullet = Instantiate(bullet, transform.position, transform.rotation) as Rigidbody2D;
 			instantiatedBullet.velocity = transform.up * bulletSpeed;	
@@ -110,16 +110,7 @@ public class rocketController : MonoBehaviour
 		}
 	}
 
-	/*string pushButton(Vector3 touchPosition) {
-		RaycastHit2D hit = Physics2D.Raycast(touchPosition, Vector2.zero);
-		if(hit.collider != null){
-			GameObject recipient = hit.transform.gameObject;
-			if (recipient.name == "Thruster" || recipient.name == "Gun"){
-			}
-		}
-	}*/
-
-	void translateRocket(Vector3 touchPosition)
+	/*void translateRocket(Vector3 touchPosition)
 	{
 		RaycastHit2D hit = Physics2D.Raycast(touchPosition, Vector2.zero);
 		if (hit.collider != null) {
@@ -127,29 +118,19 @@ public class rocketController : MonoBehaviour
 			if (recipient.name == "Thruster") {
 				rigidbody2D.AddForce(thrusterSpeed * transform.up);
 				thrust();
-				//acc += thrusterSpeed*transform.up;
 			} else if (recipient.name == "Gun") {
-				//acc -= thrusterSpeed*transform.up;
 				rigidbody2D.AddForce(-transform.up);
 				shoot();
 			}
 		}
-	}
+	}*/
 
 	void rotateRocket(float axis)
 	{
-		//int rotateStep = (int)(axis * 180/Pi) / rotationScale;
-		//transform.Rotate(0, 0, rotateStep * rotationScale * rotationSpeed * Pi / 180);
 		Quaternion intermediateQuat = Quaternion.Euler(transform.eulerAngles);
 		Quaternion targetQuat = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, rotationScale * axis * 180 / Pi + flipped);
 		transform.rotation = Quaternion.Lerp(intermediateQuat, targetQuat, lowPassFilterFactor);
 	}
-
-	/*void updateKinematics(){
-		velocity = acc * Time.fixedDeltaTime + G * Time.fixedTime;
-		acc -= friction * velocity;
-		transform.position += velocity * Time.fixedDeltaTime;
-	}*/
 
 	IEnumerator delay(bool win)
 	{
@@ -177,7 +158,6 @@ public class rocketController : MonoBehaviour
 	void OnCollisionEnter2D(Collision2D col)
 	{
 		if (col.gameObject.name == "platform") {
-			//Debug.Log ("win " + vel.magnitude + " " + Mathf.Abs(transform.eulerAngles.z) );
 			if (vel.magnitude < allowedSpeed 
 				&& (Mathf.Abs(transform.eulerAngles.z) < allowedAngle || Mathf.Abs(transform.eulerAngles.z) > (360 - allowedAngle))) {
 				win();
@@ -199,10 +179,10 @@ public class rocketController : MonoBehaviour
 				GameObject recipient = hit.transform.gameObject;
 				if (recipient.name == "Thruster") {
 					initialTouchPos[touch.fingerId] = touch.position;
-					touchThruster = true;
+					swipedThruster = true;
 				} else if (recipient.name == "Gun") {
 					initialTouchPos[touch.fingerId] = touch.position;
-					touchGun = true;
+					swipedGun = true;
 				}
 			}
 		} else if (touch.phase == TouchPhase.Ended) {
@@ -215,9 +195,9 @@ public class rocketController : MonoBehaviour
 	{
 		foreach (Touch touch in Input.touches) {
 			bool swipe = detectSwipe(touch);
-			if (touchGun && touchThruster && swipe) {
-				touchGun = false;
-				touchThruster = false;
+			if (swipedGun && swipedThruster && swipe) {
+				swipedGun = false;
+				swipedThruster = false;
 				return true;
 			}
 		}
@@ -232,27 +212,48 @@ public class rocketController : MonoBehaviour
 			flipped = 180;
 	}
 
+	void ButtonPressed(string buttonName){
+		if (buttonName == "Thruster") {
+			rigidbody2D.AddForce(thrusterSpeed * transform.up);
+			thrust ();
+		}
+		if (buttonName == "Gun") {
+			rigidbody2D.AddForce(-transform.up);
+			shoot();
+		}
+	}
+
+	/*void ButtonSwiped(string buttonName){
+		if (buttonName == "Thruster") {
+			swipedThruster = true;
+			timeSincePrevSwipe = 0.0f;
+		}
+		if (buttonName == "Gun") {
+			swipedGun = true;
+			timeSincePrevSwipe = 0.0f;
+		}
+	}
+
+	bool detectTwoFingerSwipe(){
+		if (timeSincePrevSwipe < swipeTimeInterval && swipedGun && swipedThruster) {
+			swipedGun = false;
+			swipedThruster = false;
+			timeSincePrevSwipe = 0.0f;
+			return true;
+		} else if (timeSincePrevSwipe > swipeTimeInterval) {
+			swipedGun = false;
+			swipedThruster = false;
+			return false;
+		}
+		return false;
+	}*/
+
 	void FixedUpdate()
 	{
-
-/*#if UNITY_EDITOR
-		if(Input.GetMouseButton(0) || Input.GetMouseButtonDown(0) || Input.GetMouseButtonUp(0)) {
-			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-			if(hit.collider != null){
-				GameObject recipient = hit.transform.gameObject;;
-				if (recipient.name == "Thruster"){
-					acc += thrusterSpeed*transform.up;
-				}
-				else if(recipient.name == "Gun") {
-					if (Input.GetMouseButtonDown(0)) {
-						acc -= thrusterSpeed*transform.up;
-					}
-				}
-			}
-		}
-
-#endif*/
+		// used in shoot()
 		timeSinceLastBullet += Time.deltaTime;
+		timeSincePrevSwipe += Time.deltaTime;
+
 
 		if (Input.touchCount > 0) {
 			bool swiped = false;
@@ -260,11 +261,11 @@ public class rocketController : MonoBehaviour
 				swiped = detectTwoFingerSwipe();
 			if (swiped) {
 				rotate180();
-			} else {
+			} /*else {
 				foreach (Touch touch in Input.touches) {
 					translateRocket(Camera.main.ScreenToWorldPoint(touch.position));
 				}
-			}
+			}*/
 
 		} else {
 			if (isThrusting) {
@@ -273,12 +274,17 @@ public class rocketController : MonoBehaviour
 			}
 		}
 
+		//velocity used in OnCollisionEnter2D
+		vel = rigidbody2D.velocity; 
 
-
-
-		vel = rigidbody2D.velocity;
-		rotateRocket(Input.acceleration.x);
-		//updateKinematics();
+		// rocket does not rotate passed 90 deg
+		if (Input.acceleration.x > (Pi / 2 / rotationScale) && Input.acceleration.x < (-Pi / 2 / rotationScale)) {
+			rotateRocket (Input.acceleration.x);
+		} else if (Input.acceleration.x < (Pi / 2 / rotationScale)) {
+			rotateRocket (Pi / 2 / rotationScale);
+		} else {
+			rotateRocket (-Pi / 2 / rotationScale);
+		}
 
 		if (Camera.main.WorldToScreenPoint(transform.position).x < 0
 			|| Camera.main.WorldToScreenPoint(transform.position).x > Screen.width

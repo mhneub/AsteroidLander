@@ -19,9 +19,9 @@ public class bulletController : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D col) {
-		Debug.Log ("bullet hit something");
 		if (col.gameObject.tag == "enemy") {
 			Destroy(col.gameObject);
+			//Physics2D.IgnoreCollision(col.gameObject.collider2D, rigidbody2D.collider2D);
 		}
 	}
 
