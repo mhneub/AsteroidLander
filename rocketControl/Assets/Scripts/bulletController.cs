@@ -18,16 +18,16 @@ public class bulletController : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter2D(Collision2D col) {
+	/*void OnCollisionEnter2D(Collision2D col) {
 		if (col.gameObject.tag == "enemy") {
 			Destroy(col.gameObject);
 			//Physics2D.IgnoreCollision(col.gameObject.collider2D, rigidbody2D.collider2D);
 		}
-	}
+	}*/
 
 	void OnTriggerEnter2D(Collider2D col) {
 		//if (col.gameObject.name == "platform") {
-		if (col.gameObject.tag == "terrain") {
+		if (col.gameObject.tag == "terrain" || col.gameObject.tag == "enemy") {
 			Destroy(gameObject);
 		}
 	}

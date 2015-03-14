@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class asteroid2DController : MonoBehaviour {
-	public int health = 3;
+	public int health = 20;
 	public Vector2 initialVelocity;
 
 	Vector3 axis;
@@ -34,6 +34,7 @@ public class asteroid2DController : MonoBehaviour {
 
 	// Update is called once per frame
 	void FixedUpdate () {
+		Debug.Log (health);
 		if (health <= 0) {
 			explode();
 		}
@@ -54,6 +55,12 @@ public class asteroid2DController : MonoBehaviour {
 			rigidbody2D.AddForce(impulse);
 		}
 		if (col.gameObject.name == "bullet") {
+			health--;
+		}
+	}
+
+	void OnTriggerEnter2D(Collider2D col) {
+		if (col.gameObject.tag == "bullet") {
 			health--;
 		}
 	}

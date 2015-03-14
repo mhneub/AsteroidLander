@@ -145,13 +145,11 @@ public class rocketController : MonoBehaviour
 
 	void rocketDeath()
 	{
-		Debug.Log("lose");
 		StartCoroutine(delay(false));
 	}
 
 	void win()
 	{
-		Debug.Log("win");
 		StartCoroutine(delay(true));
 	}
 
