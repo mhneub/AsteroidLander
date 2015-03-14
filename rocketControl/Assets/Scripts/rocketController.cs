@@ -68,7 +68,7 @@ public class rocketController : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		Screen.orientation = ScreenOrientation.LandscapeLeft;
+		Screen.orientation = ScreenOrientation.LandscapeRight;
 		vel = new Vector3(0f, 0f, 0f);
 		//originPosition = new Vector3(0f, 0f, 0f);
 		originAngles = new Vector3(0f, 0f, 0f);
@@ -140,7 +140,12 @@ public class rocketController : MonoBehaviour
 			YouLoseText.gameObject.renderer.enabled = true;
 		}
 		yield return new WaitForSeconds(1);
-		Application.LoadLevel(Application.loadedLevel);
+		if (!win || Application.loadedLevel == 3) {
+			Application.LoadLevel(0);
+		} else {
+			Application.LoadLevel(Application.loadedLevel + 1);
+		}
+
 	}
 
 	void rocketDeath()

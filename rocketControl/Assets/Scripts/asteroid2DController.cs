@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class asteroid2DController : MonoBehaviour {
-	public int health = 20;
+	public int health = 10;
 	public Vector2 initialVelocity;
 
 	Vector3 axis;
