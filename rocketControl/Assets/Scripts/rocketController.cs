@@ -42,7 +42,8 @@ public class rocketController : MonoBehaviour
 	bool thrustedLastFrame;
 	bool thrustedThisFrame;
 
-
+	ParticleSystem thrustParticleSystem;
+	ParticleSystem thrustBurstParticleSystem;
 
 	//old physics parameters
 	/*float gravity = -0.5f;
@@ -63,7 +64,6 @@ public class rocketController : MonoBehaviour
 		transform.eulerAngles = originAngles;
 		rigidbody2D.velocity = Vector3.zero;
 		rigidbody2D.angularVelocity = 0f;
-
 	}
 
 	// Use this for initialization
@@ -82,6 +82,12 @@ public class rocketController : MonoBehaviour
 		spriteRenderer.sprite = spriteNoFlame;
 		thrustedLastFrame = false;
 		thrustedThisFrame = false;
+
+		ParticleSystem[] ps = GetComponentsInChildren<ParticleSystem> ();
+		thrustParticleSystem = ps [0];
+		thrustBurstParticleSystem = ps [1];
+		thrustParticleSystem.Stop ();
+		thrustBurstParticleSystem.Stop ();
 	}
 
 	void thrust()
@@ -273,8 +279,12 @@ public class rocketController : MonoBehaviour
 		// switch rocket sprite to flame/no-flame if thrusting started/stopped this frame
 		if (!thrustedThisFrame && thrustedLastFrame) {
 			spriteRenderer.sprite = spriteNoFlame;
+			//thrustParticleSystem.Stop ();
 		} else if (thrustedThisFrame && !thrustedLastFrame) {
 			spriteRenderer.sprite = spriteWithFlame;
+		
+			thrustBurstParticleSystem.Emit(25);
+			//thrustParticleSystem.Play();
 		}
 		thrustedLastFrame = thrustedThisFrame;
 		thrustedThisFrame = false;

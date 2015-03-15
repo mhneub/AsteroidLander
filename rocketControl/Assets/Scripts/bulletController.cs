@@ -3,6 +3,8 @@ using System.Collections;
 
 public class bulletController : MonoBehaviour {
 
+	public GameObject explodeParticles;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -22,6 +24,9 @@ public class bulletController : MonoBehaviour {
 		// destroy bullet if it hits asteroid or terrain
 		if (col.gameObject.tag == "terrain" || col.gameObject.tag == "enemy") {
 			Destroy(gameObject);
+
+			// explode
+			GameObject particles = Instantiate(explodeParticles, transform.position, transform.rotation) as GameObject;
 		}
 	}
 }
