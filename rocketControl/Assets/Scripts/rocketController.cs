@@ -39,7 +39,8 @@ public class rocketController : MonoBehaviour
 	Dictionary<int,Vector2> initialTouchPos;
 	Dictionary<int, float> swipeDist;
 	SpriteRenderer spriteRenderer;
-	bool isThrusting;
+	bool thrustedLastFrame;
+	bool thrustedThisFrame;
 
 
 
@@ -79,7 +80,8 @@ public class rocketController : MonoBehaviour
 
 		spriteRenderer = GetComponent<SpriteRenderer>();
 		spriteRenderer.sprite = spriteNoFlame;
-		isThrusting = false;
+		thrustedLastFrame = false;
+		thrustedThisFrame = false;
 	}
 
 	void thrust()
@@ -92,11 +94,7 @@ public class rocketController : MonoBehaviour
 				recipient.rigidbody2D.AddForce(-transform.up * 10 / (dist)); //add distance parameter maybe
 			}
 		}
-		// update sprite of rocket if necessary
-		if (!isThrusting) {
-			spriteRenderer.sprite = spriteWithFlame;
-			isThrusting = true;
-		}
+		thrustedThisFrame = true;
 	}
 
 	void shoot()
@@ -270,12 +268,16 @@ public class rocketController : MonoBehaviour
 				}
 			}*/
 
-		} else {
-			if (isThrusting) {
-				spriteRenderer.sprite = spriteNoFlame;
-				isThrusting = false;
-			}
 		}
+
+		// switch rocket sprite to flame/no-flame if thrusting started/stopped this frame
+		if (!thrustedThisFrame && thrustedLastFrame) {
+			spriteRenderer.sprite = spriteNoFlame;
+		} else if (thrustedThisFrame && !thrustedLastFrame) {
+			spriteRenderer.sprite = spriteWithFlame;
+		}
+		thrustedLastFrame = thrustedThisFrame;
+		thrustedThisFrame = false;
 
 		//velocity used in OnCollisionEnter2D
 		vel = rigidbody2D.velocity; 

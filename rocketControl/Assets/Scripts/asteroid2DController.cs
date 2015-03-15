@@ -2,30 +2,39 @@
 using System.Collections;
 
 public class asteroid2DController : MonoBehaviour {
+
 	public int health = 10;
 	public Vector2 initialVelocity;
-
-	Vector3 axis;
-	float angle;
-	Vector3 vel;
-	float rotationSpeed;
+	public float initialRotation;	// degrees/second
 
 	// Use this for initialization
 	void Start () {
-		transform.rotation.ToAngleAxis (out angle, out axis);
-		float speed = Random.Range (0f, 1f);
+		Vector3 vel;
+		float rotationSpeed;
+
 		if (initialVelocity.x == 0 && initialVelocity.y == 0) {
-			Vector2 velocityDir = new Vector2 (Random.Range (-1F, 1F), Random.Range (-1F, 1F)).normalized;
+			// this is a non-uniform sampling of possible directions!!
+			//Vector2 velocityDir = new Vector2 (Random.Range (-1F, 1F), Random.Range (-1F, 1F)).normalized;
+			//vel = speed * velocityDir;
+
+			float speed = Random.Range (0f, 0.2f);
+			float theta = Random.Range (0f, 2f * Mathf.PI);
+			Vector2 velocityDir = new Vector2(Mathf.Cos (theta), Mathf.Sin (theta));
 			vel = speed * velocityDir;
 		} else {
 			vel = initialVelocity;
 		}
-		rotationSpeed = 0.1f / transform.localScale.x;
-	}
 
-	void updateKinematics(){
-		transform.RotateAround (transform.position, axis, angle * rotationSpeed);
-		transform.position += vel * Time.fixedDeltaTime;
+		if (initialRotation == 0f) {
+			float max = 90f;	// deg/sec
+			rotationSpeed = Random.Range(-max, max);
+		} else {
+			rotationSpeed = initialRotation;
+		}
+
+		Rigidbody2D rb = GetComponent<Rigidbody2D> ();
+		rb.velocity = vel;
+		rb.angularVelocity = rotationSpeed;
 	}
 
 	void explode(){
@@ -37,25 +46,6 @@ public class asteroid2DController : MonoBehaviour {
 		Debug.Log (health);
 		if (health <= 0) {
 			explode();
-		}
-		if (Camera.main.WorldToScreenPoint (transform.position).x < 0
-						|| Camera.main.WorldToScreenPoint (transform.position).x > Screen.width){
-			vel.x = -vel.x;
-		}
-		if (Camera.main.WorldToScreenPoint (transform.position).y < 0
-		    || Camera.main.WorldToScreenPoint (transform.position).y > Screen.height){
-			vel.y = -vel.y;
-		}
-		updateKinematics ();
-	}
-
-	void OnCollisionEnter2D(Collision2D col) {
-		if (col.gameObject.tag == "enemy" || col.gameObject.tag == "terrain") {
-			Vector2 impulse = new Vector2(-vel.x, -vel.y);
-			rigidbody2D.AddForce(impulse);
-		}
-		if (col.gameObject.name == "bullet") {
-			health--;
 		}
 	}
 
