@@ -46,7 +46,6 @@ public class asteroid2DController : MonoBehaviour {
 
 	// Update is called once per frame
 	void FixedUpdate () {
-		Debug.Log (health);
 		if (health <= 0) {
 			explode();
 		}

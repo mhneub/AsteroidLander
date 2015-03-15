@@ -28,9 +28,9 @@ public class rocketController : MonoBehaviour
 	float swipeDistVertical;
 	float bulletTimeInterval = 0.1f;	// minimum time between bullets in seconds
 	float timeSinceLastBullet = 0.0f;
-	float swipeTimeInterval = 1f;
+	float swipeTimeInterval = 0.5f;
 	float timeSincePrevSwipe = 0.0f;
-	int flipped = 0;
+	bool flipped = false;
 	bool swipedThruster = false;
 	bool swipedGun = false;
 	Vector3 originPosition;
@@ -114,25 +114,15 @@ public class rocketController : MonoBehaviour
 		}
 	}
 
-	/*void translateRocket(Vector3 touchPosition)
-	{
-		RaycastHit2D hit = Physics2D.Raycast(touchPosition, Vector2.zero);
-		if (hit.collider != null) {
-			GameObject recipient = hit.transform.gameObject;
-			if (recipient.name == "Thruster") {
-				rigidbody2D.AddForce(thrusterSpeed * transform.up);
-				thrust();
-			} else if (recipient.name == "Gun") {
-				rigidbody2D.AddForce(-transform.up);
-				shoot();
-			}
-		}
-	}*/
-
 	void rotateRocket(float axis)
 	{
 		Quaternion intermediateQuat = Quaternion.Euler(transform.eulerAngles);
-		Quaternion targetQuat = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, rotationScale * axis * 180 / Pi + flipped);
+		Quaternion targetQuat;
+		if (flipped) {
+			targetQuat = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, -rotationScale * axis * 180 / Pi + 180);
+		} else {
+			targetQuat = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, rotationScale * axis * 180 / Pi);
+		}
 		transform.rotation = Quaternion.Lerp(intermediateQuat, targetQuat, lowPassFilterFactor);
 	}
 
@@ -177,7 +167,117 @@ public class rocketController : MonoBehaviour
 		}
 	}
 
-	bool detectSwipe(Touch touch)
+	/*void rotate180()
+	{
+		//flipped = -flipped;
+		if (flipped == 180)
+			flipped = 0;
+		else if (flipped == 0)
+			flipped = 180;
+	}*/
+
+	void ButtonPressed(string buttonTag){
+		if (buttonTag == "thruster") {
+			rigidbody2D.AddForce(thrusterSpeed * transform.up);
+			thrust ();
+		}
+		if (buttonTag == "gun") {
+			rigidbody2D.AddForce(-transform.up);
+			shoot();
+		}
+	}
+
+	void ButtonSwiped(string buttonTag){
+		if (buttonTag == "thruster") {
+			swipedThruster = true;
+			timeSincePrevSwipe = 0.0f;
+		}
+		if (buttonTag == "gun") {
+			swipedGun = true;
+			timeSincePrevSwipe = 0.0f;
+		}
+	}
+
+	bool detectTwoFingerSwipe(){
+		if (timeSincePrevSwipe < swipeTimeInterval && swipedGun && swipedThruster) {
+			swipedGun = false;
+			swipedThruster = false;
+			timeSincePrevSwipe = 0.0f;
+			return true;
+		} else if (timeSincePrevSwipe > swipeTimeInterval) {
+			swipedGun = false;
+			swipedThruster = false;
+			return false;
+		}
+		return false;
+	}
+
+	void FixedUpdate()
+	{
+		// used in shoot()
+		timeSinceLastBullet += Time.deltaTime;
+
+		// check for two button swipe to flip rocket
+		timeSincePrevSwipe += Time.deltaTime;
+		if(detectTwoFingerSwipe()){
+			flipped = !flipped;
+		}
+
+		// switch rocket sprite to flame/no-flame if thrusting started/stopped this frame
+		if (!thrustedThisFrame && thrustedLastFrame) {
+			spriteRenderer.sprite = spriteNoFlame;
+			//thrustParticleSystem.Stop ();
+		} else if (thrustedThisFrame && !thrustedLastFrame) {
+			spriteRenderer.sprite = spriteWithFlame;
+		
+			thrustBurstParticleSystem.Emit(25);
+			//thrustParticleSystem.Play();
+		}
+		thrustedLastFrame = thrustedThisFrame;
+		thrustedThisFrame = false;
+
+		//velocity used in OnCollisionEnter2D
+		vel = rigidbody2D.velocity; 
+
+		// rocket does not rotate passed 90 deg
+		if (Input.acceleration.x > (Pi / 2 / rotationScale) && Input.acceleration.x < (-Pi / 2 / rotationScale)) {
+			rotateRocket (Input.acceleration.x);
+		} else if (Input.acceleration.x < (Pi / 2 / rotationScale)) {
+			rotateRocket (Pi / 2 / rotationScale);
+		} else {
+			rotateRocket (-Pi / 2 / rotationScale);
+		}
+
+		// rocket cannot go offscreen
+		if (Camera.main.WorldToScreenPoint(transform.position).x < 0
+			|| Camera.main.WorldToScreenPoint(transform.position).x > Screen.width
+			|| Camera.main.WorldToScreenPoint(transform.position).y < 0
+			|| Camera.main.WorldToScreenPoint(transform.position).y > Screen.height) {
+			rocketDeath();
+		}
+	}
+}
+
+
+///////OLD CODE FOR BUTTON PRESS AND SWIPE//////////
+
+	/*void translateRocket(Vector3 touchPosition)
+	{
+		RaycastHit2D hit = Physics2D.Raycast(touchPosition, Vector2.zero);
+		if (hit.collider != null) {
+			GameObject recipient = hit.transform.gameObject;
+			if (recipient.name == "Thruster") {
+				rigidbody2D.AddForce(thrusterSpeed * transform.up);
+				thrust();
+			} else if (recipient.name == "Gun") {
+				rigidbody2D.AddForce(-transform.up);
+				shoot();
+			}
+		}
+	}*/
+
+
+	/*bool detectSwipe(Touch touch)
 	{
 		swipeDist[touch.fingerId] = 0;
 		if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved) {
@@ -209,103 +309,23 @@ public class rocketController : MonoBehaviour
 			}
 		}
 		return false;
-	}
-
-	void rotate180()
-	{
-		if (flipped == 180)
-			flipped = 0;
-		else if (flipped == 0)
-			flipped = 180;
-	}
-
-	void ButtonPressed(string buttonName){
-		if (buttonName == "Thruster") {
-			rigidbody2D.AddForce(thrusterSpeed * transform.up);
-			thrust ();
-		}
-		if (buttonName == "Gun") {
-			rigidbody2D.AddForce(-transform.up);
-			shoot();
-		}
-	}
-
-	/*void ButtonSwiped(string buttonName){
-		if (buttonName == "Thruster") {
-			swipedThruster = true;
-			timeSincePrevSwipe = 0.0f;
-		}
-		if (buttonName == "Gun") {
-			swipedGun = true;
-			timeSincePrevSwipe = 0.0f;
-		}
-	}
-
-	bool detectTwoFingerSwipe(){
-		if (timeSincePrevSwipe < swipeTimeInterval && swipedGun && swipedThruster) {
-			swipedGun = false;
-			swipedThruster = false;
-			timeSincePrevSwipe = 0.0f;
-			return true;
-		} else if (timeSincePrevSwipe > swipeTimeInterval) {
-			swipedGun = false;
-			swipedThruster = false;
-			return false;
-		}
-		return false;
 	}*/
 
-	void FixedUpdate()
-	{
-		// used in shoot()
-		timeSinceLastBullet += Time.deltaTime;
-		timeSincePrevSwipe += Time.deltaTime;
 
 
-		if (Input.touchCount > 0) {
+
+		/*if (Input.touchCount > 0) {
+
 			bool swiped = false;
 			if (Input.touchCount == 2)
 				swiped = detectTwoFingerSwipe();
 			if (swiped) {
-				rotate180();
+				flipped =  !flipped;
+				//rotate180();
 			} /*else {
 				foreach (Touch touch in Input.touches) {
 					translateRocket(Camera.main.ScreenToWorldPoint(touch.position));
 				}
-			}*/
+			}
 
-		}
-
-		// switch rocket sprite to flame/no-flame if thrusting started/stopped this frame
-		if (!thrustedThisFrame && thrustedLastFrame) {
-			spriteRenderer.sprite = spriteNoFlame;
-			//thrustParticleSystem.Stop ();
-		} else if (thrustedThisFrame && !thrustedLastFrame) {
-			spriteRenderer.sprite = spriteWithFlame;
-		
-			thrustBurstParticleSystem.Emit(25);
-			//thrustParticleSystem.Play();
-		}
-		thrustedLastFrame = thrustedThisFrame;
-		thrustedThisFrame = false;
-
-		//velocity used in OnCollisionEnter2D
-		vel = rigidbody2D.velocity; 
-
-		// rocket does not rotate passed 90 deg
-		if (Input.acceleration.x > (Pi / 2 / rotationScale) && Input.acceleration.x < (-Pi / 2 / rotationScale)) {
-			rotateRocket (Input.acceleration.x);
-		} else if (Input.acceleration.x < (Pi / 2 / rotationScale)) {
-			rotateRocket (Pi / 2 / rotationScale);
-		} else {
-			rotateRocket (-Pi / 2 / rotationScale);
-		}
-
-		if (Camera.main.WorldToScreenPoint(transform.position).x < 0
-			|| Camera.main.WorldToScreenPoint(transform.position).x > Screen.width
-			|| Camera.main.WorldToScreenPoint(transform.position).y < 0
-			|| Camera.main.WorldToScreenPoint(transform.position).y > Screen.height) {
-			rocketDeath();
-		}
-	}
-}
+		}*/
