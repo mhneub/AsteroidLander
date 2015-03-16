@@ -21,7 +21,7 @@ public class rocketController : MonoBehaviour
 	float allowedAngle = 5f;
 	float rocketSizeScale = 0.5f;
 	float thrusterSpeed = 1f;
-	float rotationScale = -4f;
+	float rotationScale = -8f;
 	float bulletSpeed = 5;
 	float lowPassFilterFactor = 0.2f;
 	float minSwipeDist = 20;
@@ -239,14 +239,16 @@ public class rocketController : MonoBehaviour
 		//velocity used in OnCollisionEnter2D
 		vel = rigidbody2D.velocity; 
 
+		rotateRocket (Input.acceleration.x);
+
 		// rocket does not rotate passed 90 deg
-		if (Input.acceleration.x > (Pi / 2 / rotationScale) && Input.acceleration.x < (-Pi / 2 / rotationScale)) {
+		/*if (Input.acceleration.x > (Pi / 2 / rotationScale) && Input.acceleration.x < (-Pi / 2 / rotationScale)) {
 			rotateRocket (Input.acceleration.x);
 		} else if (Input.acceleration.x < (Pi / 2 / rotationScale)) {
 			rotateRocket (Pi / 2 / rotationScale);
 		} else {
 			rotateRocket (-Pi / 2 / rotationScale);
-		}
+		}*/
 
 		// rocket cannot go offscreen
 		if (Camera.main.WorldToScreenPoint(transform.position).x < 0
