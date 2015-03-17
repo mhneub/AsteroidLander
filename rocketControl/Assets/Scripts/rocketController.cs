@@ -7,7 +7,7 @@ public class rocketController : MonoBehaviour
 
 	// public variables
 	public LayerMask ignore;
-	public GameObject YouLoseText;
+	//public GameObject YouLoseText;
 	public GameObject YouWinText;
 	public Rigidbody2D bullet;
 	public Sprite spriteNoFlame;
@@ -22,10 +22,8 @@ public class rocketController : MonoBehaviour
 	float rocketSizeScale = 0.5f;
 	float thrusterSpeed = 1f;
 	float rotationScale = -8f;
-	float bulletSpeed = 5;
+	float bulletSpeed = 10f;
 	float lowPassFilterFactor = 0.2f;
-	float minSwipeDist = 20;
-	float swipeDistVertical;
 	float bulletTimeInterval = 0.1f;	// minimum time between bullets in seconds
 	float timeSinceLastBullet = 0.0f;
 	float swipeTimeInterval = 0.5f;
@@ -36,14 +34,14 @@ public class rocketController : MonoBehaviour
 	Vector3 originPosition;
 	Vector3 originAngles;
 	Vector2 vel;
-	Dictionary<int,Vector2> initialTouchPos;
-	Dictionary<int, float> swipeDist;
 	SpriteRenderer spriteRenderer;
 	bool thrustedLastFrame;
 	bool thrustedThisFrame;
 
 	ParticleSystem thrustParticleSystem;
 	ParticleSystem thrustBurstParticleSystem;
+
+	int lastLevel = 3;
 
 	//old physics parameters
 	/*float gravity = -0.5f;
@@ -58,7 +56,6 @@ public class rocketController : MonoBehaviour
 
 	void Init()
 	{
-		YouLoseText.gameObject.renderer.enabled = false;
 		YouWinText.gameObject.renderer.enabled = false;
 		//transform.position = originPosition;
 		transform.eulerAngles = originAngles;
@@ -74,8 +71,6 @@ public class rocketController : MonoBehaviour
 		//originPosition = new Vector3(0f, 0f, 0f);
 		originAngles = new Vector3(0f, 0f, 0f);
 		transform.localScale = new Vector3(rocketSizeScale, rocketSizeScale, rocketSizeScale);
-		initialTouchPos = new Dictionary<int, Vector2>();
-		swipeDist = new Dictionary<int, float>();
 		Init();
 
 		spriteRenderer = GetComponent<SpriteRenderer>();
@@ -128,13 +123,9 @@ public class rocketController : MonoBehaviour
 
 	IEnumerator delay(bool win)
 	{
-		if (win) {
-			YouWinText.gameObject.renderer.enabled = true;
-		} else {
-			YouLoseText.gameObject.renderer.enabled = true;
-		}
+		YouWinText.gameObject.renderer.enabled = true;
 		yield return new WaitForSeconds(1);
-		if (!win || Application.loadedLevel == 3) {
+		if (Application.loadedLevel == lastLevel) {
 			Application.LoadLevel(0);
 		} else {
 			Application.LoadLevel(Application.loadedLevel + 1);
@@ -144,7 +135,7 @@ public class rocketController : MonoBehaviour
 
 	void rocketDeath()
 	{
-		StartCoroutine(delay(false));
+		Application.LoadLevel(Application.loadedLevel);
 	}
 
 	void win()
@@ -240,15 +231,6 @@ public class rocketController : MonoBehaviour
 		vel = rigidbody2D.velocity; 
 
 		rotateRocket (Input.acceleration.x);
-
-		// rocket does not rotate passed 90 deg
-		/*if (Input.acceleration.x > (Pi / 2 / rotationScale) && Input.acceleration.x < (-Pi / 2 / rotationScale)) {
-			rotateRocket (Input.acceleration.x);
-		} else if (Input.acceleration.x < (Pi / 2 / rotationScale)) {
-			rotateRocket (Pi / 2 / rotationScale);
-		} else {
-			rotateRocket (-Pi / 2 / rotationScale);
-		}*/
 
 		// rocket cannot go offscreen
 		if (Camera.main.WorldToScreenPoint(transform.position).x < 0
