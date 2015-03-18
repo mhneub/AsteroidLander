@@ -7,9 +7,20 @@ public class asteroid2DController : MonoBehaviour {
 	public Vector2 initialVelocity;
 	public float initialRotation;	// degrees/second
 	public GameObject explodeParticles;
+	public Sprite fullHealthAsteroid;
+	public Sprite damagedAsteroid1;
+	public Sprite damagedAsteroid2;
+
+	int originalHealth;
+	SpriteRenderer spriteRenderer;
 
 	// Use this for initialization
 	void Start () {
+
+		originalHealth = health;
+		spriteRenderer = GetComponent<SpriteRenderer>();
+		spriteRenderer.sprite = fullHealthAsteroid;
+
 		Vector3 vel;
 		float rotationSpeed;
 
@@ -48,7 +59,12 @@ public class asteroid2DController : MonoBehaviour {
 	void FixedUpdate () {
 		if (health <= 0) {
 			explode();
+		} else if (health == originalHealth * 2 / 3) {
+			spriteRenderer.sprite = damagedAsteroid1;
+		} else if (health == originalHealth / 3) {
+			spriteRenderer.sprite = damagedAsteroid2;
 		}
+
 	}
 
 	void OnTriggerEnter2D(Collider2D col) {

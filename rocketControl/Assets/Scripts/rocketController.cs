@@ -160,7 +160,6 @@ public class rocketController : MonoBehaviour
 
 	/*void rotate180()
 	{
-		//flipped = -flipped;
 		if (flipped == 180)
 			flipped = 0;
 		else if (flipped == 0)
