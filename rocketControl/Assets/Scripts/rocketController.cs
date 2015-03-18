@@ -145,6 +145,7 @@ public class rocketController : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D col)
 	{
+		Debug.Log ("rocket collided with " + col.gameObject.name);
 		if (col.gameObject.name == "platform") {
 			if (vel.magnitude < allowedSpeed 
 				&& (Mathf.Abs(transform.eulerAngles.z) < allowedAngle || Mathf.Abs(transform.eulerAngles.z) > (360 - allowedAngle))) {
@@ -232,12 +233,14 @@ public class rocketController : MonoBehaviour
 		rotateRocket (Input.acceleration.x);
 
 		// rocket cannot go offscreen
+		// now handled by box colliders of boundary_invisible
+		/*
 		if (Camera.main.WorldToScreenPoint(transform.position).x < 0
 			|| Camera.main.WorldToScreenPoint(transform.position).x > Screen.width
 			|| Camera.main.WorldToScreenPoint(transform.position).y < 0
 			|| Camera.main.WorldToScreenPoint(transform.position).y > Screen.height) {
 			rocketDeath();
-		}
+		}*/
 	}
 }
 
