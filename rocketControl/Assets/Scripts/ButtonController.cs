@@ -19,6 +19,7 @@ public class ButtonController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		//gameObject.GetComponent<SpriteRenderer> ().enabled = false;
 		gameObject.GetComponent<SpriteRenderer> ().sprite = redButton;
 		rocket = GameObject.Find ("rocket");
 		buttonPosX = new Vector2 (Camera.main.WorldToScreenPoint (gameObject.transform.position).x, 0);
