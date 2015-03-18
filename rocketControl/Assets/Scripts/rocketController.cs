@@ -28,7 +28,7 @@ public class rocketController : MonoBehaviour
 	float timeSinceLastBullet = 0.0f;
 	float swipeTimeInterval = 0.5f;
 	float timeSincePrevSwipe = 0.0f;
-	bool flipped = false;
+	int flipped = 0;
 	bool swipedThruster = false;
 	bool swipedGun = false;
 	Vector3 originPosition;
@@ -113,11 +113,7 @@ public class rocketController : MonoBehaviour
 	{
 		Quaternion intermediateQuat = Quaternion.Euler(transform.eulerAngles);
 		Quaternion targetQuat;
-		if (flipped) {
-			targetQuat = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, -rotationScale * axis * 180 / Pi + 180);
-		} else {
-			targetQuat = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, rotationScale * axis * 180 / Pi);
-		}
+		targetQuat = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, rotationScale * axis * 180 / Pi + flipped);
 		transform.rotation = Quaternion.Lerp(intermediateQuat, targetQuat, lowPassFilterFactor);
 	}
 
@@ -159,13 +155,13 @@ public class rocketController : MonoBehaviour
 		}
 	}
 
-	/*void rotate180()
+	void rotate180()
 	{
 		if (flipped == 180)
 			flipped = 0;
 		else if (flipped == 0)
 			flipped = 180;
-	}*/
+	}
 
 	void ButtonPressed(string buttonTag){
 		if (buttonTag == "thruster") {
@@ -211,7 +207,7 @@ public class rocketController : MonoBehaviour
 		// check for two button swipe to flip rocket
 		timeSincePrevSwipe += Time.deltaTime;
 		if(detectTwoFingerSwipe()){
-			flipped = !flipped;
+			rotate180();
 		}
 
 		// switch rocket sprite to flame/no-flame if thrusting started/stopped this frame
