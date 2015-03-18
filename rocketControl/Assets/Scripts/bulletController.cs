@@ -12,12 +12,13 @@ public class bulletController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Camera.main.WorldToScreenPoint (transform.position).x < 0
+		// now handled by box colliders of boundary_invisible
+		/*if (Camera.main.WorldToScreenPoint (transform.position).x < 0
 		    || Camera.main.WorldToScreenPoint (transform.position).x > Screen.width
 		    || Camera.main.WorldToScreenPoint (transform.position).y < 0
 		    || Camera.main.WorldToScreenPoint (transform.position).y > Screen.height ) {
 			Destroy(gameObject);
-		}
+		}*/
 	}
 
 	void OnTriggerEnter2D(Collider2D col) {
