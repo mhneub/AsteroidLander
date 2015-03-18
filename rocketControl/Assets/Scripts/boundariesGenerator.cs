@@ -26,26 +26,23 @@ public class boundariesGenerator : MonoBehaviour {
 		int numpoints, platformIndex;
 		Vector2[] points;
 
-		StreamReader filein = new StreamReader ("./points.txt");
-		numpoints = int.Parse (filein.ReadLine ());
-		platformIndex = int.Parse (filein.ReadLine ());
-
+		TextAsset pointsFile = Resources.Load ("points") as TextAsset;
+		string[] lines = pointsFile.text.Split ("\n" [0]);
+		numpoints = int.Parse (lines[0]);
+		platformIndex = int.Parse (lines[1]);
 		//Debug.Log ("n=" + numpoints + "  k=" + platformIndex);
 
 		points = new Vector2[numpoints];
 		for (int i = 0; i < numpoints; i++) {
-			string[] words = filein.ReadLine().Split(" "[0]);
+			string[] words = lines[2+i].Split(" "[0]);
 			float x = float.Parse (words[0]);
 			float y = float.Parse (words[1]);
-
 			//Debug.Log (x+" "+y);
 
 			points[i] = new Vector2();
 			points[i].x = bg_xmin + x / 1920f * bg_width;
 			points[i].y = bg_ymin + y / 1080f * bg_height;
 		}
-		filein.Close ();
-
 
 
 		// construct mesh for mesh collider
