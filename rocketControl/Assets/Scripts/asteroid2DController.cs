@@ -4,6 +4,7 @@ using System.Collections;
 public class asteroid2DController : MonoBehaviour {
 
 	public bool isMagnet;
+	public float attractForce;
 	public float P;
 	public float D;
 
@@ -76,7 +77,7 @@ public class asteroid2DController : MonoBehaviour {
 			Vector3 toRocket = rocket.transform.position - gameObject.transform.position;
 			Vector3 dir = toRocket.normalized;
 
-			gameObject.rigidbody2D.AddForce(5f * Time.deltaTime * dir);
+			gameObject.rigidbody2D.AddForce(attractForce * Time.deltaTime * dir);
 
 			float theta = gameObject.transform.rotation.eulerAngles.z;
 			float targetTheta = Mathf.Atan2(dir.y, dir.x) / Mathf.PI * 180f;
