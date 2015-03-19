@@ -28,9 +28,8 @@ public class rocketController : MonoBehaviour
 	float lowPassFilterFactor = 0.2f;
 	float bulletTimeInterval = 0.1f;	// minimum time between bullets in seconds
 	float timeSinceLastBullet = 0.0f;
-	float swipeTimeInterval = 0.5f;
-	float timeSinceThrusterSwipe = 1000f;
-	float timeSinceGunSwipe = 1000f;
+	float swipeTimeInterval = 0.2f;
+	float timeSinceLastSwipe = 1000f;
 
 	int flipped = 0;
 	Vector3 originPosition;
@@ -199,7 +198,7 @@ public class rocketController : MonoBehaviour
 	}
 
 	void ButtonDown(string buttonTag) {
-		//Debug.Log (buttonTag + " down");
+		Debug.Log (buttonTag + " down");
 
 		if (buttonTag == "thruster") {
 			OnThrustStart ();
@@ -208,7 +207,7 @@ public class rocketController : MonoBehaviour
 		}
 	}
 	void ButtonUp(string buttonTag) {	// means button was released and not swiped
-		//Debug.Log (buttonTag + " up");
+		Debug.Log (buttonTag + " up");
 
 		if (buttonTag == "thruster") {
 			OnThrustStop ();
@@ -218,28 +217,21 @@ public class rocketController : MonoBehaviour
 	}
 
 	void ButtonSwiped(string buttonTag) {
-		//Debug.Log (buttonTag + " swiped");
+		Debug.Log (buttonTag + " swiped");
 
 		// see if double-swipe happened
-		bool doubleSwiped = false;
 		if (buttonTag == "thruster") {
-			timeSinceThrusterSwipe = 0f;
-			if (timeSinceGunSwipe <= swipeTimeInterval) {
-				doubleSwiped = true;
-			}
 			OnThrustStop();
-		} else if (buttonTag == "gun") {
-			isShooting = false;
-			timeSinceGunSwipe = 0f;
-			if (timeSinceThrusterSwipe <= swipeTimeInterval) {
-				doubleSwiped = true;
+			if (timeSinceLastSwipe >= swipeTimeInterval) {
+				OnDoubleSwipe();
 			}
+		} else if (buttonTag == "gun") {
 			OnGunStop ();
+			if (timeSinceLastSwipe >= swipeTimeInterval) {
+				OnDoubleSwipe();
+			}
 		}
-
-		if (doubleSwiped) {
-			OnDoubleSwipe();
-		}
+		timeSinceLastSwipe = 0f;
 	}
 
 
@@ -247,8 +239,7 @@ public class rocketController : MonoBehaviour
 	{
 		// update timeSince counters
 		timeSinceLastBullet += Time.deltaTime;
-		timeSinceThrusterSwipe += Time.deltaTime;
-		timeSinceGunSwipe += Time.deltaTime;
+		timeSinceLastSwipe += Time.deltaTime;
 
 		if (isShooting) {
 			shoot ();

@@ -10,14 +10,6 @@ public class ButtonController : MonoBehaviour {
 
 	GameObject rocket;
 
-	//Vector2 initialTouchPos;
-	//float swipeDist;
-	//float distToButton;
-	
-	//float minSwipeDistVert = 20;
-	//float maxSwipeDistHor = 100;
-	//Vector2 buttonPosX;
-
 	Touch buttonTouchLastFrame;
 	bool buttonTouchedLastFrame;	// used as null flag
 
@@ -34,27 +26,6 @@ public class ButtonController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		/*foreach(Touch touch in Input.touches){
-			swipeDist = 0;
-			if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary) {
-				RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(touch.position), Vector2.zero);
-				if(hit.collider != null && hit.transform.gameObject == gameObject){
-
-					initialTouchPos = touch.position;
-					gameObject.GetComponent<SpriteRenderer> ().sprite = yellowButton;
-					rocket.SendMessage("ButtonPressed", gameObject.tag);
-
-				}
-			}
-			else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled){
-				gameObject.GetComponent<SpriteRenderer> ().sprite = redButton;
-				swipeDist = (new Vector2(0, touch.position.y) - new Vector2(0, initialTouchPos.y)).magnitude;
-				distToButton = (new Vector2(touch.position.x, 0) - buttonPosX).magnitude;
-				if(swipeDist > minSwipeDistVert && distToButton < maxSwipeDistHor){
-					rocket.SendMessage("ButtonSwiped", gameObject.tag);
-				}
-			}
-		}*/
 
 		// see if the button was touched this frame.  If so, get that touch
 		Touch buttonTouch = new Touch();
