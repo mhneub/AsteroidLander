@@ -3,6 +3,10 @@ using System.Collections;
 
 public class asteroid2DController : MonoBehaviour {
 
+	public bool isMagnet;
+	public float P;
+	public float D;
+
 	public int health = 10;
 	public Vector2 initialVelocity;
 	public float initialRotation;	// degrees/second
@@ -13,6 +17,7 @@ public class asteroid2DController : MonoBehaviour {
 
 	int originalHealth;
 	SpriteRenderer spriteRenderer;
+	GameObject rocket;
 
 	// Use this for initialization
 	void Start () {
@@ -47,6 +52,8 @@ public class asteroid2DController : MonoBehaviour {
 		Rigidbody2D rb = GetComponent<Rigidbody2D> ();
 		rb.velocity = vel;
 		rb.angularVelocity = rotationSpeed;
+
+		rocket = GameObject.Find ("rocket");
 	}
 
 	void explode(){
@@ -65,6 +72,24 @@ public class asteroid2DController : MonoBehaviour {
 			spriteRenderer.sprite = damagedAsteroid2;
 		}
 
+		if (isMagnet) {
+			Vector3 toRocket = rocket.transform.position - gameObject.transform.position;
+			Vector3 dir = toRocket.normalized;
+
+			gameObject.rigidbody2D.AddForce(5f * Time.deltaTime * dir);
+
+			float theta = gameObject.transform.rotation.eulerAngles.z;
+			float targetTheta = Mathf.Atan2(dir.y, dir.x) / Mathf.PI * 180f;
+
+			float dTheta = targetTheta - theta + 90f;
+			while (dTheta >= 180f) dTheta -= 360f;
+			while (dTheta < -180f) dTheta += 360f;
+
+			float angularVelocity = gameObject.rigidbody2D.angularVelocity;
+
+
+			gameObject.rigidbody2D.AddTorque(P * dTheta - D * angularVelocity);
+		}
 	}
 
 	void OnTriggerEnter2D(Collider2D col) {

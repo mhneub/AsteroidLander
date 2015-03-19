@@ -7,6 +7,7 @@ public class boundariesGenerator : MonoBehaviour {
 	public GameObject boundary;
 	public GameObject platform;
 	public GameObject boundary_invisible;
+	public float Z_EXTENT;
 
 	// Use this for initialization
 	void Start () {
@@ -46,7 +47,6 @@ public class boundariesGenerator : MonoBehaviour {
 
 
 		// construct mesh for mesh collider
-		const float Z_EXTENT = 5f;
 
 		Vector3[] vertices = new Vector3[2*numpoints + 8];
 		int[] triangles = new int[6*(numpoints-1) + 24];
