@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class asteroidExplodeParticlesController : MonoBehaviour {
+public class timedDestroy : MonoBehaviour {
+
+	public float seconds;
 
 	// Use this for initialization
 	void Start () {
-		Destroy (gameObject, 2f);
+		Destroy (gameObject, seconds);
 	}
 	
 	// Update is called once per frame
