@@ -22,6 +22,7 @@ public class rocketController : MonoBehaviour
 	float allowedAngle = 5f;
 	float rocketSizeScale = 0.5f;
 	float thrusterSpeed = 1f;
+	float gunSpeed = 60f;	// per second!
 	float rotationScale = -8f;
 	float bulletSpeed = 10f;
 	float lowPassFilterFactor = 0.2f;
@@ -86,6 +87,8 @@ public class rocketController : MonoBehaviour
 			Rigidbody2D instantiatedBullet = Instantiate(bullet, transform.position, transform.rotation) as Rigidbody2D;
 			instantiatedBullet.velocity = transform.up * bulletSpeed;	
 			Physics2D.IgnoreCollision(instantiatedBullet.collider2D, rigidbody2D.collider2D);
+
+			rigidbody2D.AddForce(-gunSpeed * bulletTimeInterval * transform.up);
 
 			timeSinceLastBullet = 0.0f;
 		}
