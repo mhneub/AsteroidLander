@@ -3,6 +3,8 @@ using System.Collections;
 
 public class particleHit : MonoBehaviour {
 
+	public float force;
+
 	GameObject parent;
 	Rigidbody2D parentRigidBody;
 
@@ -22,6 +24,6 @@ public class particleHit : MonoBehaviour {
 		//Debug.Log ("particle collided " + other.name);
 		Vector3 direction = transform.position - other.transform.position;
 		direction = direction.normalized;
-		parentRigidBody.AddForce(direction * 15);
+		parentRigidBody.AddForce(direction * force);
 	}
 }

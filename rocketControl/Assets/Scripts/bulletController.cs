@@ -27,7 +27,7 @@ public class bulletController : MonoBehaviour {
 			Destroy(gameObject);
 
 			// explode
-			GameObject particles = Instantiate(explodeParticles, transform.position, transform.rotation) as GameObject;
+			Instantiate(explodeParticles, transform.position, transform.rotation);
 		}
 	}
 }

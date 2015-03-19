@@ -6,7 +6,7 @@ public class asteroid2DController : MonoBehaviour {
 	public int health = 10;
 	public Vector2 initialVelocity;
 	public float initialRotation;	// degrees/second
-	public GameObject explodeParticles;
+	public ParticleSystem explodeParticles;
 	public Sprite fullHealthAsteroid;
 	public Sprite damagedAsteroid1;
 	public Sprite damagedAsteroid2;
@@ -52,7 +52,7 @@ public class asteroid2DController : MonoBehaviour {
 	void explode(){
 		Destroy (gameObject);
 
-		GameObject particles = Instantiate(explodeParticles, transform.position, transform.rotation) as GameObject;
+		Instantiate(explodeParticles, transform.position, transform.rotation);
 	}
 
 	// Update is called once per frame
