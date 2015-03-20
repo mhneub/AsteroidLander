@@ -162,6 +162,7 @@ public class rocketController : MonoBehaviour
 
 	void win()
 	{
+		rocketDead = true;	// disables thrust, gun, etc.
 		StartCoroutine(delayWin());
 	}
 
@@ -197,7 +198,6 @@ public class rocketController : MonoBehaviour
 			spriteRenderer.sprite = spriteWithFlame;
 			thrustBurstParticleSystem.Emit(12);
 			thrustParticleSystem.Play();
-
 			audioSource_thrust.PlayOneShot (thrustSound, thrustSoundScale);
 		}
 	}
@@ -206,7 +206,6 @@ public class rocketController : MonoBehaviour
 		isThrusting = false;
 		spriteRenderer.sprite = spriteNoFlame;
 		thrustParticleSystem.Stop();
-
 		audioSource_thrust.Stop();
 	}
 

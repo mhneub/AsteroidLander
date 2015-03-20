@@ -8,6 +8,8 @@ public class boundariesGenerator : MonoBehaviour {
 	public GameObject platform;
 	public GameObject boundary_invisible;
 	public float Z_EXTENT;
+	public string pointsResourceName;
+
 
 	// Use this for initialization
 	void Start () {
@@ -27,7 +29,7 @@ public class boundariesGenerator : MonoBehaviour {
 		int numpoints, platformIndex;
 		Vector2[] points;
 
-		TextAsset pointsFile = Resources.Load ("points") as TextAsset;
+		TextAsset pointsFile = Resources.Load (pointsResourceName) as TextAsset;
 		string[] lines = pointsFile.text.Split ("\n" [0]);
 		numpoints = int.Parse (lines[0]);
 		platformIndex = int.Parse (lines[1]);
