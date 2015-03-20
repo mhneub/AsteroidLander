@@ -19,6 +19,8 @@ public class rocketController : MonoBehaviour
 	public float explodeSoundScale;
 	public AudioClip thrustSound;
 	public float thrustSoundScale;
+	public AudioClip swishSound;
+	public float swishSoundScale;
 
 	AudioSource audioSource;
 	AudioSource audioSource_thrust;
@@ -185,6 +187,8 @@ public class rocketController : MonoBehaviour
 			flipped = 0;
 		else if (flipped == 0)
 			flipped = 180;
+
+		audioSource.PlayOneShot (swishSound, swishSoundScale);
 	}
 
 	void OnThrustStart() {
