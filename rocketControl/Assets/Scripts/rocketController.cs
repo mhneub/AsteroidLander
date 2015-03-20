@@ -24,7 +24,6 @@ public class rocketController : MonoBehaviour
 	// physics parameters
 	float allowedSpeed = 0.5f;
 	float allowedAngle = 5f;
-	float rocketSizeScale = 0.5f;
 	float thrusterSpeed = 1f;
 	float gunSpeed = 60f;	// per second!
 	float rotationScale = -8f;
@@ -66,7 +65,7 @@ public class rocketController : MonoBehaviour
 		//vel = new Vector3(0f, 0f, 0f);
 		//originPosition = new Vector3(0f, 0f, 0f);
 		originAngles = new Vector3(0f, 0f, 0f);
-		transform.localScale = new Vector3(rocketSizeScale, rocketSizeScale, rocketSizeScale);
+		//transform.localScale = new Vector3(rocketSizeScale, rocketSizeScale, rocketSizeScale);
 		Init();
 
 		spriteRenderer = GetComponent<SpriteRenderer>();
