@@ -12,6 +12,7 @@ public class bulletController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		audioSource = GameObject.Find ("audioSource").GetComponent<AudioSource> ();
+		Destroy (gameObject, 5f);
 	}
 	
 	// Update is called once per frame
