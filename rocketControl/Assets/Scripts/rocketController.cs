@@ -13,6 +13,10 @@ public class rocketController : MonoBehaviour
 	public Sprite spriteNoFlame;
 	public Sprite spriteWithFlame;
 	public ParticleSystem explodeParticles;
+	public AudioClip shootSound;
+	public float shootSoundScale;
+
+	AudioSource audioSource;
 
 	// constant variables
 	const float Pi = 3.14159f;
@@ -77,17 +81,21 @@ public class rocketController : MonoBehaviour
 		thrustParticleSystem.Stop ();
 		thrustBurstParticleSystem.Stop ();
 		rocketDead = false;
+
+		audioSource = GetComponent<AudioSource> ();
 	}
 
 	void shoot()
 	{
 		// don't shoot if rocket died
 		if (timeSinceLastBullet >= bulletTimeInterval && !rocketDead) {
-			Rigidbody2D instantiatedBullet = Instantiate(bullet, transform.position, transform.rotation) as Rigidbody2D;
+			Rigidbody2D instantiatedBullet = Instantiate(bullet, transform.position + 0.5f*transform.up, transform.rotation) as Rigidbody2D;
 			instantiatedBullet.velocity = transform.up * bulletSpeed;	
 			Physics2D.IgnoreCollision(instantiatedBullet.collider2D, rigidbody2D.collider2D);
 
 			rigidbody2D.AddForce(-gunSpeed * bulletTimeInterval * transform.up);
+
+			audioSource.PlayOneShot(shootSound, shootSoundScale);
 
 			timeSinceLastBullet = 0.0f;
 		}
