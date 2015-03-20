@@ -198,7 +198,7 @@ public class rocketController : MonoBehaviour
 	}
 
 	void ButtonDown(string buttonTag) {
-		Debug.Log (buttonTag + " down");
+		//Debug.Log (buttonTag + " down");
 
 		if (buttonTag == "thruster") {
 			OnThrustStart ();
@@ -207,7 +207,7 @@ public class rocketController : MonoBehaviour
 		}
 	}
 	void ButtonUp(string buttonTag) {	// means button was released and not swiped
-		Debug.Log (buttonTag + " up");
+		//Debug.Log (buttonTag + " up");
 
 		if (buttonTag == "thruster") {
 			OnThrustStop ();
@@ -217,7 +217,7 @@ public class rocketController : MonoBehaviour
 	}
 
 	void ButtonSwiped(string buttonTag) {
-		Debug.Log (buttonTag + " swiped");
+		//Debug.Log (buttonTag + " swiped");
 
 		// see if double-swipe happened
 		if (buttonTag == "thruster") {
