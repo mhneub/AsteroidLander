@@ -8,6 +8,8 @@ public class boundariesGenerator : MonoBehaviour {
 	public GameObject platform;
 	public GameObject boundary_invisible;
 	public float Z_EXTENT;
+	public string pointsResourceName;
+	public bool invertWindingOrder;
 
 	// Use this for initialization
 	void Start () {
@@ -27,7 +29,7 @@ public class boundariesGenerator : MonoBehaviour {
 		int numpoints, platformIndex;
 		Vector2[] points;
 
-		TextAsset pointsFile = Resources.Load ("points") as TextAsset;
+		TextAsset pointsFile = Resources.Load (pointsResourceName) as TextAsset;
 		string[] lines = pointsFile.text.Split ("\n" [0]);
 		numpoints = int.Parse (lines[0]);
 		platformIndex = int.Parse (lines[1]);
@@ -40,10 +42,13 @@ public class boundariesGenerator : MonoBehaviour {
 			float y = float.Parse (words[1]);
 			//Debug.Log (x+" "+y);
 
-			points[i] = new Vector2();
-			points[i].x = bg_xmin + x / 1920f * bg_width;
-			points[i].y = bg_ymin + y / 1080f * bg_height;
+			int index = invertWindingOrder ? numpoints - 1 - i : i;
+			points[index] = new Vector2();
+			points[index].x = bg_xmin + x / 1920f * bg_width;
+			points[index].y = bg_ymin + y / 1080f * bg_height;
 		}
+		if (invertWindingOrder)
+			platformIndex = numpoints - 2 - platformIndex;
 
 
 		// construct mesh for mesh collider
