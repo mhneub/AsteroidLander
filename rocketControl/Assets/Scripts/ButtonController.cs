@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class ButtonController : MonoBehaviour {
 
-	public Sprite redButton;
-	public Sprite yellowButton;
+	public float lowAlpha;
+	public float highAlpha;
 
 
 	GameObject rocket;
@@ -13,10 +13,14 @@ public class ButtonController : MonoBehaviour {
 	Touch buttonTouchLastFrame;
 	bool buttonTouchedLastFrame;	// used as null flag
 
+	SpriteRenderer spriteRenderer;
+
 	// Use this for initialization
 	void Start () {
-		//gameObject.GetComponent<SpriteRenderer> ().enabled = false;
-		gameObject.GetComponent<SpriteRenderer> ().sprite = redButton;
+
+		spriteRenderer = GetComponent<SpriteRenderer> ();
+		spriteRenderer.color = new Color (1f, 1f, 1f, lowAlpha);
+
 		rocket = GameObject.Find ("rocket");
 		//buttonPosX = new Vector2 (Camera.main.WorldToScreenPoint (gameObject.transform.position).x, 0);
 
@@ -42,12 +46,12 @@ public class ButtonController : MonoBehaviour {
 		// check if button started or stopped being pressed this frame
 		if (!buttonTouchedLastFrame && buttonTouched) {
 			// button started being pressed this frame
-			gameObject.GetComponent<SpriteRenderer> ().sprite = yellowButton;
+			spriteRenderer.color = new Color (1f, 1f, 1f, highAlpha);
 			rocket.SendMessage("ButtonDown", gameObject.tag);
 
 		} else if (buttonTouchedLastFrame && !buttonTouched) {
 			// button stopped being pressed this frame
-			gameObject.GetComponent<SpriteRenderer> ().sprite = redButton;
+			spriteRenderer.color = new Color (1f, 1f, 1f, lowAlpha);
 
 			// check if this was due to a swipe from inside to outside the button:
 			// search for a move touch with the same fingerid as the button touch from last frame
