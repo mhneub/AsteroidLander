@@ -15,6 +15,8 @@ public class rocketController : MonoBehaviour
 	public ParticleSystem explodeParticles;
 	public AudioClip shootSound;
 	public float shootSoundScale;
+	public AudioClip explodeSound;
+	public float explodeSoundScale;
 
 	AudioSource audioSource;
 
@@ -81,7 +83,7 @@ public class rocketController : MonoBehaviour
 		thrustBurstParticleSystem.Stop ();
 		rocketDead = false;
 
-		audioSource = GetComponent<AudioSource> ();
+		audioSource = GameObject.Find("audioSource").GetComponent<AudioSource> ();
 	}
 
 	void shoot()
@@ -142,6 +144,8 @@ public class rocketController : MonoBehaviour
 			thrustParticleSystem.Stop ();
 
 			Instantiate(explodeParticles, transform.position, transform.rotation);
+
+			audioSource.PlayOneShot(explodeSound, explodeSoundScale);
 
 			StartCoroutine (delayLose ());
 			//Application.LoadLevel(Application.loadedLevel);

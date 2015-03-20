@@ -16,6 +16,11 @@ public class asteroid2DController : MonoBehaviour {
 	public Sprite damagedAsteroid1;
 	public Sprite damagedAsteroid2;
 
+	public AudioClip explodeSound;
+	public float explodeSoundScale;
+
+	AudioSource audioSource;
+
 	int originalHealth;
 	SpriteRenderer spriteRenderer;
 	GameObject rocket;
@@ -55,12 +60,18 @@ public class asteroid2DController : MonoBehaviour {
 		rb.angularVelocity = rotationSpeed;
 
 		rocket = GameObject.Find ("rocket");
+
+		audioSource = GameObject.Find ("audioSource").GetComponent<AudioSource> ();
 	}
 
 	void explode(){
+		audioSource.PlayOneShot (explodeSound, explodeSoundScale);
+
 		Destroy (gameObject);
 
 		Instantiate(explodeParticles, transform.position, transform.rotation);
+
+
 	}
 
 	// Update is called once per frame
