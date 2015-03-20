@@ -17,8 +17,11 @@ public class rocketController : MonoBehaviour
 	public float shootSoundScale;
 	public AudioClip explodeSound;
 	public float explodeSoundScale;
+	public AudioClip thrustSound;
+	public float thrustSoundScale;
 
 	AudioSource audioSource;
+	AudioSource audioSource_thrust;
 
 	// constant variables
 	const float Pi = 3.14159f;
@@ -84,6 +87,7 @@ public class rocketController : MonoBehaviour
 		rocketDead = false;
 
 		audioSource = GameObject.Find("audioSource").GetComponent<AudioSource> ();
+		audioSource_thrust = GameObject.Find("audioSource_thrust").GetComponent<AudioSource> ();
 	}
 
 	void shoot()
@@ -146,6 +150,8 @@ public class rocketController : MonoBehaviour
 			Instantiate(explodeParticles, transform.position, transform.rotation);
 
 			audioSource.PlayOneShot(explodeSound, explodeSoundScale);
+			audioSource_thrust.Stop();
+
 
 			StartCoroutine (delayLose ());
 			//Application.LoadLevel(Application.loadedLevel);
@@ -187,6 +193,8 @@ public class rocketController : MonoBehaviour
 			spriteRenderer.sprite = spriteWithFlame;
 			thrustBurstParticleSystem.Emit(12);
 			thrustParticleSystem.Play();
+
+			audioSource_thrust.PlayOneShot (thrustSound, thrustSoundScale);
 		}
 	}
 
@@ -194,6 +202,8 @@ public class rocketController : MonoBehaviour
 		isThrusting = false;
 		spriteRenderer.sprite = spriteNoFlame;
 		thrustParticleSystem.Stop();
+
+		audioSource_thrust.Stop();
 	}
 
 	void OnGunStart() {
